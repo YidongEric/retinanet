@@ -105,6 +105,17 @@ class PascalDataset(Dataset):
 
     def __len__(self) -> int:
         return len(self.image_ids)
+        
+    def clamp_bbox_coordinates(bboxes):
+        clamped_bboxes = []
+        for bbox in bboxes:
+            x_min, y_min, x_max, y_max, class_id = bbox
+            x_min = max(0.0, min(x_min, 1.0))
+            y_min = max(0.0, min(y_min, 1.0))
+            x_max = max(0.0, min(x_max, 1.0))
+            y_max = max(0.0, min(y_max, 1.0))
+            clamped_bboxes.append((x_min, y_min, x_max, y_max, class_id))
+        return clamped_bboxes
 
     def __getitem__(self, index: int):
         # Grab the Image
@@ -131,6 +142,9 @@ class PascalDataset(Dataset):
         boxes = torch.tensor(transformed["bboxes"], dtype=torch.float32)
         class_labels = torch.tensor(transformed["class_labels"])
 
+        # adjust boundaries
+        boxes = clamp_bbox_coordinates(boxes)
+        
         # target dictionary
         target = {}
         image_idx = torch.tensor([index])
