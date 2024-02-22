@@ -120,7 +120,8 @@ class RetinaNetModel(pl.LightningModule):
 
     def validation_step(self, batch, batch_idx, *args, **kwargs):
         images, targets, _ = batch  # unpack the one batch from the DataLoader
-        targets = [{k: v for k, v in t.items()} for t in targets]  # Unpack the Targets
+        targets = [{k: v if k != 'boxes' else torch.tensor(v, dtype=torch.float32, device=self.device) for k, v in t.items()} for t in targets]
+        #targets = [{k: v for k, v in t.items()} for t in targets]  # Unpack the Targets
         # Calculate Losses {regression_loss , classification_loss}
         loss_dict = self.net(images, targets)
         # Calculate Total Loss
