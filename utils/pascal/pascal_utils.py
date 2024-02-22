@@ -64,6 +64,16 @@ def convert_annotations_to_df(annotation_dir, image_dir, image_set="train"):
         xml_df["labels"] = encoder.transform(xml_df["class"]) + 1
     return xml_df
 
+def clamp_bbox_coordinates(bboxes):
+    clamped_bboxes = []
+    for bbox in bboxes:
+        x_min, y_min, x_max, y_max, class_id = bbox
+        x_min = max(0.0, min(x_min, 1.0))
+        y_min = max(0.0, min(y_min, 1.0))
+        x_max = max(0.0, min(x_max, 1.0))
+        y_max = max(0.0, min(y_max, 1.0))
+        clamped_bboxes.append((x_min, y_min, x_max, y_max, class_id))
+    return clamped_bboxes
 
 class PascalDataset(Dataset):
     """
@@ -105,17 +115,6 @@ class PascalDataset(Dataset):
 
     def __len__(self) -> int:
         return len(self.image_ids)
-        
-    def clamp_bbox_coordinates(bboxes):
-        clamped_bboxes = []
-        for bbox in bboxes:
-            x_min, y_min, x_max, y_max, class_id = bbox
-            x_min = max(0.0, min(x_min, 1.0))
-            y_min = max(0.0, min(y_min, 1.0))
-            x_max = max(0.0, min(x_max, 1.0))
-            y_max = max(0.0, min(y_max, 1.0))
-            clamped_bboxes.append((x_min, y_min, x_max, y_max, class_id))
-        return clamped_bboxes
 
     def __getitem__(self, index: int):
         # Grab the Image
