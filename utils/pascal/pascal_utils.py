@@ -67,13 +67,25 @@ def convert_annotations_to_df(annotation_dir, image_dir, image_set="train"):
 def clamp_bbox_coordinates(bboxes):
     clamped_bboxes = []
     for bbox in bboxes:
-        x_min, y_min, x_max, y_max, class_id = bbox
-        x_min = max(0.0, min(x_min, 1.0))
-        y_min = max(0.0, min(y_min, 1.0))
-        x_max = max(0.0, min(x_max, 1.0))
-        y_max = max(0.0, min(y_max, 1.0))
-        clamped_bboxes.append((x_min, y_min, x_max, y_max, class_id))
+        if len(bbox) == 4: 
+            x_min, y_min, x_max, y_max = bbox
+            clamped_bboxes.append((
+                max(0.0, min(x_min, 1.0)),
+                max(0.0, min(y_min, 1.0)),
+                max(0.0, min(x_max, 1.0)),
+                max(0.0, min(y_max, 1.0))
+            ))
+        else: 
+            x_min, y_min, x_max, y_max, class_id = bbox
+            clamped_bboxes.append((
+                max(0.0, min(x_min, 1.0)),
+                max(0.0, min(y_min, 1.0)),
+                max(0.0, min(x_max, 1.0)),
+                max(0.0, min(y_max, 1.0)),
+                class_id
+            ))
     return clamped_bboxes
+
 
 class PascalDataset(Dataset):
     """
