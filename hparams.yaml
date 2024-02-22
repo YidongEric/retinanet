@@ -9,10 +9,10 @@
 # NOTE: the full set of arguments can be found in `retinanet/config.py` .
 model:
   backbone_kind: resnet50 # backbone of the model
-  num_classes: 90 # number of classes (excluding the background class)
+  num_classes: 2 # number of classes (excluding the background class)
   freeze_bn: true # wether to freeze the backone of the model
-  min_size: 800 # Size of the smallest side of the image during training
-  max_size: 1600 #Size of the Maximum size of the image during training
+  min_size: 600 # Size of the smallest side of the image during training
+  max_size: 700 #Size of the Maximum size of the image during training
   pretrained: true #Loads in pretrained-imagenet weights for backbone
 
 # ============================================================== #
@@ -28,11 +28,16 @@ model:
 # NOTE: if validation data is not available then set the `valid_paths` argument
 # to be false this will then use
 dataset:
-  kind: false
-  root_dir: false
-  trn_paths: false
-  valid_paths: false
-  test_paths: false
+   kind: pascal
+   trn_paths:
+      - /content/data_train/Annotations/
+      - /content/data_train/Images/"
+   test_paths:
+      - /content/data_test/Annotations/"
+      - /content/data_test/Images/"
+   val_paths:
+      - /content/data_validation/Annotations/"
+      - /content/data_validation/Images/"
 
 # paramters for the pytroch DataLoader
 dataloader:
