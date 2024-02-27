@@ -147,12 +147,36 @@ class PascalDataset(Dataset):
         # suppose all instances are not crowd
         iscrowd = torch.zeros((records.shape[0],), dtype=torch.int64)
 
+        # # apply transformations
+        # transformed = self.tfms(image=im, bboxes=boxes, class_labels=class_labels)
+        # image = transformed["image"]
+        # boxes = torch.tensor(transformed["bboxes"], dtype=torch.float32)
+        # class_labels = torch.tensor(transformed["class_labels"])
+
         # apply transformations
         transformed = self.tfms(image=im, bboxes=boxes, class_labels=class_labels)
         image = transformed["image"]
-        boxes = torch.tensor(transformed["bboxes"], dtype=torch.float32)
-        class_labels = torch.tensor(transformed["class_labels"])
+        transformed_boxes = transformed["bboxes"]
+        class_labels = transformed["class_labels"]
+        
+        # Function to check if bbox is within 0 and 1
+        def is_bbox_valid(bbox):
+            x_min, y_min, x_max, y_max = bbox
+            return 0 <= x_min <= 1 and 0 <= y_min <= 1 and 0 <= x_max <= 1 and 0 <= y_max <= 1
+        
+        # Filter bboxes that are within the bounds [0, 1]
+        filtered_bboxes = [bbox for bbox in transformed_boxes if is_bbox_valid(bbox)]
+        
+        # If any bbox was outside [0, 1], discard this sample
+        if len(filtered_bboxes) != len(transformed_boxes):
+            # Return None or a special value to indicate that this sample should be skipped
+            return None
+        
+        # Otherwise, convert the filtered bboxes and class_labels to tensors
+        boxes = torch.tensor(filtered_bboxes, dtype=torch.float32)
+        class_labels = torch.tensor(class_labels, dtype=torch.int64)
 
+        
         # adjust boundaries
         boxes = clamp_bbox_coordinates(boxes)
         
