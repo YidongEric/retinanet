@@ -4,8 +4,19 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
 
+# def collate_fn(batch):
+#     "`collate_fn` for pytorch obj_detection dataloader"
+#     return tuple(zip(*batch))
+
 def collate_fn(batch):
-    "`collate_fn` for pytorch obj_detection dataloader"
+    # Filter out all samples that are None
+    batch = [item for item in batch if item is not None]
+    # If the filtered batch is empty, special handling is needed, such as returning an empty batch
+    if not batch:
+        # Here, return the appropriate value based on your specific needs, such as None or an empty batch
+        # Note, if returning None or others, you might need to check and handle this in your training loop
+        return None
+    # Proceed with normal batch processing for non-None samples
     return tuple(zip(*batch))
 
 
