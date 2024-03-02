@@ -149,17 +149,10 @@ class PascalDataset(Dataset):
         iscrowd = torch.zeros((records.shape[0],), dtype=torch.int64)
 
         # apply transformations
-        transformed = self.tfms(image=im, bboxes=boxes, class_labels=class_labels,
-                                bbox_params=A.BboxParams(format='pascal_voc'))
+        transformed = self.tfms(image=im, bboxes=boxes, class_labels=class_labels)
         image = transformed["image"]
         transformed_boxes = transformed["bboxes"]
         class_labels = transformed["class_labels"]
-        
-        # # apply transformations
-        # transformed = self.tfms(image=im, bboxes=boxes, class_labels=class_labels)
-        # image = transformed["image"]
-        # transformed_boxes = transformed["bboxes"]
-        # class_labels = transformed["class_labels"]
         
         # Function to check if bbox is within 0 and 1
         def is_bbox_valid(bbox):
