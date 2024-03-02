@@ -162,7 +162,7 @@ class PascalDataset(Dataset):
         # Function to check if bbox is within 0 and 1
         def is_bbox_valid(bbox):
             x_min, y_min, x_max, y_max = bbox
-            return 0 <= x_min <= 1 and 0 <= y_min <= 1 and 0 <= x_max <= 1 and 0 <= y_max <= 1
+            return 0 <= x_min <= 1 and 0 <= y_min <= 1 and 0 <= x_max <= 0.9 and 0 <= y_max <= 0.9
         
         # Filter bboxes that are within the bounds [0, 1]
         filtered_bboxes = [bbox for bbox in transformed_boxes if is_bbox_valid(bbox)]
