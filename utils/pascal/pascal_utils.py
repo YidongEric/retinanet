@@ -148,16 +148,21 @@ class PascalDataset(Dataset):
         # suppose all instances are not crowd
         iscrowd = torch.zeros((records.shape[0],), dtype=torch.int64)
 
-        # apply transformations
-        tran = self.tfms(image=im, bboxes=boxes, class_labels=class_labels)
-        image = tran["image"]
-        transformed_boxes = tran["bboxes"]
-        class_labels = tran["class_labels"]
-        
         # Function to check if bbox is within 0 and 1
         def is_bbox_valid(bbox):
             x_min, y_min, x_max, y_max = bbox
             return 0 <= x_min <= 1 and 0 <= y_min <= 1 and 0 <= x_max <= 1 and 0 <= y_max <= 1
+
+        # Filter bboxes that are within the bounds [0, 1]
+        f_boxes = [bbox for bbox in transformed_boxes if is_bbox_valid(boxes)]
+        
+        # apply transformations
+        tran = self.tfms(image=im, bboxes=f_boxes, class_labels=class_labels)
+        image = tran["image"]
+        transformed_boxes = tran["bboxes"]
+        class_labels = tran["class_labels"]
+        
+
         
         # Filter bboxes that are within the bounds [0, 1]
         filtered_bboxes = [bbox for bbox in transformed_boxes if is_bbox_valid(bbox)]
