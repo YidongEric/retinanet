@@ -149,7 +149,7 @@ class PascalDataset(Dataset):
 
         # apply transformations
         transformed = self.tfms(image=im, bboxes=boxes, class_labels=class_labels,
-                                bbox_params=albumentations.BboxParams(format='pascal_voc'))
+                                bbox_params=A.BboxParams(format='pascal_voc'))
         image = transformed["image"]
         transformed_boxes = transformed["bboxes"]
         class_labels = transformed["class_labels"]
