@@ -154,8 +154,8 @@ class PascalDataset(Dataset):
             return 0 <= x_min <= 1 and 0 <= y_min <= 1 and 0 <= x_max <= 1 and 0 <= y_max <= 1
 
         # Filter bboxes that are within the bounds [0, 1]
-        f_boxes = [bbox for bbox in transformed_boxes if is_bbox_valid(boxes)]
-        
+        f_boxes = [bbox for bbox in boxes if is_bbox_valid(bbox)]     
+
         # apply transformations
         tran = self.tfms(image=im, bboxes=f_boxes, class_labels=class_labels)
         image = tran["image"]
